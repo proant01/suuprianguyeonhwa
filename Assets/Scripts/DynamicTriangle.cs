@@ -9,6 +9,7 @@ public class DynamicTriangle : MonoBehaviour
     public TMP_InputField angleInputField; // TextMeshPro용
 
     public float baseLength = 2f;        // 밑변 길이
+    public float height = 0f;
     [Range(1, 89)] public float angle = 45f; // 직각 반대 각도
 
     private PolygonCollider2D poly;
@@ -48,7 +49,7 @@ public class DynamicTriangle : MonoBehaviour
         // 각도 → 라디안 변환
         float rad = angle * Mathf.Deg2Rad;
         // 높이 = tan(angle) * baseLength
-        float height = Mathf.Tan(rad) * baseLength;
+        height = Mathf.Tan(rad) * baseLength;
 
         // 2D Collider용 점 설정
         Vector2[] colliderPoints = new Vector2[]

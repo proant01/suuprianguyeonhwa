@@ -5,6 +5,7 @@ public class BallController : MonoBehaviour
     public float frictionCoefficient = 0f;
     public float g = 9.8f;
     public float baseLength = 6f;
+    public float height = 0f;
 
     private float a, f, v;
     private Rigidbody2D rb;
@@ -21,6 +22,11 @@ public class BallController : MonoBehaviour
         rb.gravityScale = 0f;
     }
 
+    private void Update()
+    {
+        SetPosition();
+    }
+
     void FixedUpdate()
     {
         if (!rb.simulated || triangleRef == null) return;
@@ -29,6 +35,7 @@ public class BallController : MonoBehaviour
         float thetaRad = theta * Mathf.Deg2Rad;
         float sin = Mathf.Sin(thetaRad);
         float cos = Mathf.Cos(thetaRad);
+        float tan = Mathf.Tan(thetaRad);
         float m = rb.mass;
 
         switch (currentState)
@@ -87,8 +94,25 @@ public class BallController : MonoBehaviour
         Debug.Log("¸¶Âû°è¼ö ¼³Á¤µÊ: " + frictionCoefficient);
     }
 
+    public void SetPosition()
+    {
+        if (rb.simulated) return;
+
+        Height();
+    }
+
     public void StartSimulation()
     {
         rb.simulated = true;
+    }
+
+    public void Height()
+    {
+        if (triangleRef == null) return;
+
+        Debug.Log(triangleRef.height);
+
+        Vector3 topPos = triangleRef.transform.position + new Vector3(0f, triangleRef.height + 0.25f, 0f);
+        transform.position = topPos;
     }
 }
