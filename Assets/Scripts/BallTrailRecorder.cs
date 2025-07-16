@@ -61,10 +61,10 @@ public class BallTrailRecorder : MonoBehaviour
             spawnInterval = parsedValue;
             Debug.Log($"복사 주기 설정됨: {spawnInterval}초");
         }
-        else
-        {
-            Debug.LogWarning("잘못된 입력: 복사 주기는 0보다 커야 합니다.");
-        }
+        //else
+        //{
+        //    Debug.LogWarning("잘못된 입력: 복사 주기는 0보다 커야 합니다.");
+        //}
     }
 
     // 외부에서 호출하여 기록 시작

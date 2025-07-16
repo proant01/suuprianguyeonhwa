@@ -10,10 +10,10 @@ public class BallLandingDetector : MonoBehaviour
         if (collision.gameObject.CompareTag(groundTag))
         {
             float x = transform.position.x;
-            Debug.Log("구슬이 땅에 도달! X좌표: " + x);
+            //Debug.Log("구슬이 땅에 도달! X좌표: " + x);
 
             R = x - 4.75f;
-            Debug.Log("R 값: " + R);
+            Debug.Log("(x좌표 측정) R 값: " + R);
         }
     }
 }

@@ -10,7 +10,7 @@ public class DynamicTriangle : MonoBehaviour
 
     public float baseLength = 2f;        // 밑변 길이
     public float height = 0f;
-    [Range(1, 89)] public float angle = 45f; // 직각 반대 각도
+    [Range(1, 89)] public float angle = 30f; // 직각 반대 각도
 
     private PolygonCollider2D poly;
     private MeshFilter meshFilter;

@@ -7,6 +7,9 @@ public class BallController : MonoBehaviour
     public float baseLength = 6f;
     public float height = 0f;
 
+    private float v_actual = 0f;
+    private bool velocityMeasured = false;
+
     private float a, f, v;
     private Rigidbody2D rb;
 
@@ -54,14 +57,14 @@ public class BallController : MonoBehaviour
                 break;
 
             case MotionState.OnGround:
-                Debug.Log("[평면] 접지 상태 - 물리력 없음");
+                //Debug.Log("[평면] 접지 상태 - 물리력 없음");
                 break;
 
             case MotionState.FreeFall:
                 float f_g = m * g;
                 Vector2 freeFallDir = new Vector2(0f, -1f); // 수직 낙하
                 rb.AddForce(f_g * freeFallDir, ForceMode2D.Force);
-                Debug.Log("[자유낙하] 중력 작용 중");
+                //Debug.Log("[자유낙하] 중력 작용 중");
                 break;
         }
     }
@@ -75,8 +78,24 @@ public class BallController : MonoBehaviour
         }
         else if (col.collider.CompareTag("Ground"))
         {
+            //currentState = MotionState.OnGround;
+            //rb.gravityScale = 0f;
+
             currentState = MotionState.OnGround;
             rb.gravityScale = 0f;
+
+            if (!velocityMeasured)
+            {
+                v_actual = rb.linearVelocity.magnitude;
+                velocityMeasured = true;
+
+                float errorPercent = Mathf.Abs(v_actual - v) / v * 100f;
+
+                Debug.Log($"최종 속도 측정 완료:");
+                Debug.Log($"실제 속도: {v_actual:F2} m/s");
+                Debug.Log($"이론 속도: {v:F2} m/s");
+                Debug.Log($"오차율: {errorPercent:F2} %");
+            }
         }
     }
 
@@ -104,15 +123,17 @@ public class BallController : MonoBehaviour
     public void StartSimulation()
     {
         rb.simulated = true;
+        velocityMeasured = false;
     }
 
     public void Height()
     {
         if (triangleRef == null) return;
 
-        Debug.Log(triangleRef.height);
+        //Debug.Log(triangleRef.height);
 
-        Vector3 topPos = triangleRef.transform.position + new Vector3(0f, triangleRef.height + 0.25f, 0f);
+        float scaledHeight = triangleRef.height * triangleRef.transform.lossyScale.y;
+        Vector3 topPos = triangleRef.transform.position + new Vector3(0f, scaledHeight + 0.25f, 0f);
         transform.position = topPos;
     }
 }
