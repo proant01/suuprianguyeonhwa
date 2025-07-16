@@ -64,7 +64,7 @@ public class BallController : MonoBehaviour
                 float x = 2f * g * L * (sin - frictionCoefficient * cos);
                 v = x >= 0 ? Mathf.Sqrt(x) : 0f;
 
-                Debug.Log($"[경사면] 힘: {f:F2}, 최종 순간 속도(이론): {v:F2}, 가속도: {a:F2}");
+                Debug.Log($"[경사면] 힘: {f:F2}, L 값: {L:F2}, 최종 순간 속도(이론): {v:F2}, 가속도: {a:F2}");
                 break;
 
             case MotionState.OnGround:
