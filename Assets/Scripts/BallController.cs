@@ -1,14 +1,19 @@
+using System.Collections;
 using UnityEngine;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class BallController : MonoBehaviour
 {
     public float frictionCoefficient = 0f;
     public float g = 9.8f;
     public float baseLength = 6f;
-    public float height = 0f;
+    //public float height = 0f;
+    public float R = 0f;
 
     private float v_actual = 0f;
     private bool velocityMeasured = false;
+
+    public float projectileTriggerX = 3.25f; // 발사각 계산할 기준 x좌표
 
     private float a, f, v;
     private Rigidbody2D rb;
@@ -28,6 +33,12 @@ public class BallController : MonoBehaviour
     private void Update()
     {
         SetPosition();
+
+        if (rb.simulated && transform.position.x >= projectileTriggerX)
+        {
+            SpeedMeasurement();
+            CalculationOfR();
+        }
     }
 
     void FixedUpdate()
@@ -38,7 +49,7 @@ public class BallController : MonoBehaviour
         float thetaRad = theta * Mathf.Deg2Rad;
         float sin = Mathf.Sin(thetaRad);
         float cos = Mathf.Cos(thetaRad);
-        float tan = Mathf.Tan(thetaRad);
+        //float tan = Mathf.Tan(thetaRad);
         float m = rb.mass;
 
         switch (currentState)
@@ -53,7 +64,7 @@ public class BallController : MonoBehaviour
                 float x = 2f * g * L * (sin - frictionCoefficient * cos);
                 v = x >= 0 ? Mathf.Sqrt(x) : 0f;
 
-                Debug.Log($"[경사면] 힘: {f:F2}, 속도(이론): {v:F2}, 가속도: {a:F2}");
+                Debug.Log($"[경사면] 힘: {f:F2}, 최종 순간 속도(이론): {v:F2}, 가속도: {a:F2}");
                 break;
 
             case MotionState.OnGround:
@@ -69,6 +80,7 @@ public class BallController : MonoBehaviour
         }
     }
 
+
     void OnCollisionEnter2D(Collision2D col)
     {
         if (col.collider.CompareTag("Slope"))
@@ -78,26 +90,11 @@ public class BallController : MonoBehaviour
         }
         else if (col.collider.CompareTag("Ground"))
         {
-            //currentState = MotionState.OnGround;
-            //rb.gravityScale = 0f;
-
             currentState = MotionState.OnGround;
             rb.gravityScale = 0f;
-
-            if (!velocityMeasured)
-            {
-                v_actual = rb.linearVelocity.magnitude;
-                velocityMeasured = true;
-
-                float errorPercent = Mathf.Abs(v_actual - v) / v * 100f;
-
-                Debug.Log($"최종 속도 측정 완료:");
-                Debug.Log($"실제 속도: {v_actual:F2} m/s");
-                Debug.Log($"이론 속도: {v:F2} m/s");
-                Debug.Log($"오차율: {errorPercent:F2} %");
-            }
         }
     }
+
 
     void OnCollisionExit2D(Collision2D col)
     {
@@ -106,6 +103,7 @@ public class BallController : MonoBehaviour
             currentState = MotionState.FreeFall;
         }
     }
+
 
     public void SetFriction(float value)
     {
@@ -130,10 +128,33 @@ public class BallController : MonoBehaviour
     {
         if (triangleRef == null) return;
 
-        //Debug.Log(triangleRef.height);
-
         float scaledHeight = triangleRef.height * triangleRef.transform.lossyScale.y;
         Vector3 topPos = triangleRef.transform.position + new Vector3(0f, scaledHeight + 0.25f, 0f);
         transform.position = topPos;
+    }
+
+    public void SpeedMeasurement()
+    {
+        if (!velocityMeasured)
+        {
+            v_actual = rb.linearVelocity.magnitude;
+            velocityMeasured = true;
+
+            float errorPercent = Mathf.Abs(v_actual - v) / v * 100f;
+
+            Debug.Log($"최종 속도 측정 완료:");
+            Debug.Log($"실제 속도: {v_actual:F2} m/s");
+            Debug.Log($"이론 속도: {v:F2} m/s");
+            Debug.Log($"오차율: {errorPercent:F2} %");
+        }
+    }
+
+    public void CalculationOfR()
+    {
+        float theta = triangleRef.angle;
+        float thetaRad = theta * Mathf.Deg2Rad;
+        float vx = v * Mathf.Cos(thetaRad);
+        R = vx * Mathf.Sqrt((2 * 20) / g);
+        Debug.Log($"(공식 이론값) R 값: {R:F2} m");
     }
 }

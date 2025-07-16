@@ -50,8 +50,6 @@ public class BallTrailRecorder : MonoBehaviour
             color.a = 0.5f; // 반투명 잔상
             sr.color = color;
         }
-
-        Destroy(ghost, 10f); // 10초 후 자동 삭제
     }
 
     void OnIntervalInputChanged(string input)
